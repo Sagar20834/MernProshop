@@ -11,12 +11,13 @@ const loginUser = async (req, res, next) => {
 
     const userFound = await User.findOne({ email });
     if (userFound && (await userFound.comparePassword(password))) {
-      const usertosend = await User.findOne({ email }).select("-password");
-      const token = setToken(userFound, res);
+      const token = setToken(res, userFound);
+      console.log(token);
       res.json({
-        success: true,
-        message: "User logged in successfully",
-        user: usertosend,
+        id_: userFound._id,
+        name: userFound.name,
+        email: userFound.email,
+        isAdmin: userFound.isAdmin,
         token,
       });
     } else {
@@ -38,7 +39,7 @@ const registerUser = async (req, res, next) => {
       return next(appError("Email already in use", 400));
     }
     const newUser = await User.create({ name, email, password });
-    const token = setToken(newUser, res);
+    const token = setToken(res, newUser);
 
     res.json({
       message: "User registered successfully",
@@ -55,7 +56,7 @@ const registerUser = async (req, res, next) => {
 //@access private
 const logoutUser = async (req, res, next) => {
   try {
-    res.cookie("token", null, {
+    res.cookie("token", "", {
       expires: new Date(0),
       httpOnly: true,
     });

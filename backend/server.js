@@ -16,11 +16,16 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 //middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// CORS configuration
+const corsOptions = {
+  origin: "http://localhost:5173",
+  credentials: true, // This allows cookies to be sent
+};
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
-app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.json("API server is Up and Running , this is the API server!");
