@@ -15,9 +15,9 @@ import isLoggedIn from "../middlewares/isLoggedIn.js";
 
 //routes
 OrderRouter.post("/", isLoggedIn, addOrderItems);
+OrderRouter.get("/:id", isLoggedIn, getOrderById);
 OrderRouter.get("/myorders", isLoggedIn, getMyOrders);
 OrderRouter.put("/:id/pay", isLoggedIn, updateOrderToPaid);
-OrderRouter.get("/:id", isLoggedIn, isAdmin, getOrderById); //admim
 OrderRouter.put("/:id/deliver", isLoggedIn, isAdmin, updateOrderToDelivered); //admin
 OrderRouter.get("/", isLoggedIn, isAdmin, getOrders); //admin
 

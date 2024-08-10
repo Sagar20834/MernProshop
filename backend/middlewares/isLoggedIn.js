@@ -6,7 +6,6 @@ const isLoggedIn = async (req, res, next) => {
   let token;
   try {
     token = req.cookies.token;
-    console.log(token);
     if (!token) {
       return next(
         appError(

@@ -87,11 +87,26 @@ const getOrderById = async (req, res, next) => {
 //@access private
 const updateOrderToPaid = async (req, res, next) => {
   try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(appError("Order Not Found", 404));
+    order.isPaid = true;
+    order.paidAt = Date.now();
+
+    //comes from paylapl request
+    order.paymentResult = {
+      id: req.body.id,
+      status: req.body.status,
+      update_time: req.body.update_time,
+      email_address: req.body.email_address,
+    };
+
+    const updatedOrder = await order.save();
     res.json({
       message: "Update order to paid",
+      updatedOrder,
     });
   } catch (error) {
-    return next(appError("Failed to get orders in :" + error, 500));
+    return next(appError("Failed to Pay the  orders  :" + error, 500));
   }
 };
 

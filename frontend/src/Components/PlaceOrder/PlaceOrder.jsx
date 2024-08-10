@@ -136,7 +136,7 @@ const PlaceOrder = () => {
                   <button
                     type="submit"
                     onClick={placeOrderHandler}
-                    className="flex bg-green-400 min-w-32 rounded-lg text-black hover:scale-110 justify-center items-center text-center m-auto min-h-9 my-4"
+                    className="flex bg-green-400 min-w-32 rounded-lg text-black hover:scale-110 justify-center items-center text-center m-auto min-h-9 my-4 transition-all ease-in-out"
                   >
                     Place Order <FaTruckFast className="ml-2" />
                   </button>
