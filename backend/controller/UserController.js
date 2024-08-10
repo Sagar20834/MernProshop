@@ -11,14 +11,14 @@ const loginUser = async (req, res, next) => {
 
     const userFound = await User.findOne({ email });
     if (userFound && (await userFound.comparePassword(password))) {
-      const token = setToken(res, userFound);
-      console.log(token);
+      setToken(res, userFound);
+
       res.json({
-        id_: userFound._id,
+        _id: userFound._id,
         name: userFound.name,
         email: userFound.email,
         isAdmin: userFound.isAdmin,
-        token,
+        token: setToken(res, userFound),
       });
     } else {
       return next(appError("Invalid username or password", 401));
@@ -39,12 +39,12 @@ const registerUser = async (req, res, next) => {
       return next(appError("Email already in use", 400));
     }
     const newUser = await User.create({ name, email, password });
-    const token = setToken(res, newUser);
+
+    setToken(res, newUser);
 
     res.json({
       message: "User registered successfully",
       user: newUser,
-      token,
     });
   } catch (error) {
     return next(appError(error.message, 500));

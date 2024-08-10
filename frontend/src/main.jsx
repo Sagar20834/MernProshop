@@ -12,6 +12,11 @@ import Login from "./Components/Login/Login.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserProfile from "./Components/UserProfile/UserProfile.jsx";
+import Register from "./Components/Register/Register.jsx";
+import Shipping from "./Components/Shipping/Shipping.jsx";
+import PrivateRoute from "./Components/PrivateRoute/PrivateRoute.jsx";
+import Payment from "./Components/Payment/Payment.jsx";
+import PlaceOrder from "./Components/PlaceOrder/PlaceOrder.jsx";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +24,7 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
+        index: true,
         path: "",
         element: <Home />,
       },
@@ -31,12 +37,35 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+        path: "/register",
+        element: <Register />,
+      },
+      {
         path: "/product/:id",
         element: <ProductDetails />,
       },
+
       {
-        path: "/users/profile",
-        element: <UserProfile />,
+        path: "/",
+        element: <PrivateRoute />,
+        children: [
+          {
+            path: "/users/profile",
+            element: <UserProfile />,
+          },
+          {
+            path: "/shipping",
+            element: <Shipping />,
+          },
+          {
+            path: "/payment",
+            element: <Payment />,
+          },
+          {
+            path: "/placeorder",
+            element: <PlaceOrder />,
+          },
+        ],
       },
     ],
   },

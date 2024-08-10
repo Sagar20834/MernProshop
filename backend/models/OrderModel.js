@@ -23,7 +23,7 @@ const OrderSchema = new mongoose.Schema(
         },
         product: {
           type: mongoose.Schema.Types.ObjectId,
-          required: true,
+          // required: true,
           ref: "Product",
         },
         image: {

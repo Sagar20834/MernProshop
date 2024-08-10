@@ -20,7 +20,7 @@ const Home = () => {
         </div>
       ) : (
         <>
-          <div className="grid md:grid-cols-3 xl:grid-cols-4 sm:grid-cols-2  lg:grid-cols-3 gap-4 ">
+          <div className="grid md:grid-cols-3 xl:grid-cols-4 sm:grid-cols-2  lg:grid-cols-3 gap-6 ">
             {products?.map(({ _id, image, name, price, rating }) => (
               <div key={_id}>
                 <Product

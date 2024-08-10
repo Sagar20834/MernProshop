@@ -6,6 +6,7 @@ import ProductRouter from "./routes/ProductRoute.js";
 import globalErrorHandler from "./middlewares/globalErrorHandler.js";
 import UserRouter from "./routes/UserRoute.js";
 import cookieParser from "cookie-parser";
+import OrderRouter from "./routes/OrderRoute.js";
 
 dotenv.config();
 
@@ -14,15 +15,16 @@ dbConnect();
 const PORT = process.env.PORT || 5000;
 
 const app = express();
+app.use(cookieParser());
 
 //middlewares
 // CORS configuration
-const corsOptions = {
-  origin: "http://localhost:5173",
-  credentials: true, // This allows cookies to be sent
-};
-app.use(cors(corsOptions));
-app.use(cookieParser());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Replace with your frontend URL
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -32,6 +34,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/v1/products", ProductRouter);
 app.use("/api/v1/users", UserRouter);
+app.use("/api/v1/orders", OrderRouter);
 
 app.use(globalErrorHandler);
 

@@ -40,7 +40,6 @@ const Header = () => {
       dispatch(deleteCredentials());
       const res = await logout().unwrap();
       toast.success(res.message);
-      console.log(res);
       navigate("/");
       setDropdownOpen(false);
     } catch (error) {
@@ -49,7 +48,7 @@ const Header = () => {
   };
 
   return (
-    <div className="h-12 bg-gray-700 text-gray-300">
+    <div className="h-12 bg-gray-700 text-gray-300 p-1">
       <div className="flex justify-between items-center mx-6">
         <Link to="/" className="flex gap-4 text-2xl font-bold">
           <img src={logo} alt="logo" />

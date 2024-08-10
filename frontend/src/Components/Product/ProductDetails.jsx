@@ -30,50 +30,55 @@ const ProductDetails = () => {
         <>
           <div>
             <Link to="/" className="p-2 my-2 bg-green-400 rounded-md">
-              {" "}
               Go Back
             </Link>
           </div>
-          <h1 className="text-5xl text-center font-bold">Product Details</h1>
-          <div className="flex sm:flex-wrap md:flex-nowrap lg:flex-nowrap  xl:flex-nowrap">
-            <div className=" m-4  w-[25%]  ">
-              <img src={product.image} alt={product.name} />
+          <h1 className="text-3xl md:text-5xl text-center font-bold my-4">
+            Product Details
+          </h1>
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="m-4 w-[100%] h-[40%] md:w-[30%] lg:w-[30%] flex justify-center items-center">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="max-w-full h-auto object-fill"
+              />
             </div>
-            <div className=" w-[45%] ">
-              <h1 className=" my-6 text-2xl font-bold">{product.name}</h1>
+            <div className="w-full md:w-[60%] lg:w-[45%] px-4">
+              <h1 className="my-4 text-2xl font-bold">{product.name}</h1>
               <hr />
-              <p className="text-xl my-6"> {product.description}</p>
+              <p className="text-lg my-4">{product.description}</p>
               <hr />
-              <h2 className="text-xl font-bold my-6">
+              <h2 className="text-xl font-bold my-4">
                 Price: Nrs. {product.price}
               </h2>
               <hr />
-              <div className="flex items-center gap-4 my-6">
+              <div className="flex items-center gap-4 my-4">
                 <h2 className="text-xl font-bold">Rating: {product?.rating}</h2>
                 <Rating value={product?.rating} />
               </div>
             </div>
-            <div className="my-4  ml-4 w-[30%] flex flex-col border-2 rounded-lg h-48 shadow-sm">
-              <h1 className="h-[33%] flex justify-between items-center mx-6 text-xl ">
-                price: <span> Nrs. {product.price}</span>
+            <div className="my-4 w-full md:w-[35%] lg:w-[35%] h-[30%] border-2 rounded-lg shadow-sm p-4 flex flex-col justify-between">
+              <h1 className="flex justify-between items-center text-xl">
+                Price: <span>Nrs. {product.price}</span>
               </h1>
               <hr />
-              <h1 className="h-[33%] flex justify-between items-center mx-6 text-xl ">
+              <h1 className="flex justify-between items-center text-xl my-2">
                 Status:{" "}
                 <span>
                   {product.countInStock > 0 ? "In Stock" : "Out of Stock"}
                 </span>
               </h1>
               <hr />
-              {product.countInStock > 0 ? (
-                <div className="h-[33%] flex justify-between items-center mx-6 text-xl ">
+              {product.countInStock > 0 && (
+                <div className="flex justify-between items-center text-xl my-2">
                   <label htmlFor="qty">Quantity:</label>
                   <select
-                    type="select"
                     id="qty"
                     name="qty"
                     value={qty}
                     onChange={(e) => setQty(Number(e.target.value))}
+                    className="border rounded p-1"
                   >
                     {[...Array(product.countInStock).keys()].map((item) => (
                       <option key={item + 1} value={item + 1}>
@@ -82,13 +87,10 @@ const ProductDetails = () => {
                     ))}
                   </select>
                 </div>
-              ) : (
-                ""
               )}
-              <hr />
-              <div className="flex items-center justify-center my-2 mx-2">
+              <div className="flex items-center justify-center my-4">
                 <button
-                  className={`p-2 bg-green-400 rounded-md t ${
+                  className={`p-2 bg-green-400 rounded-md ${
                     product.countInStock === 0
                       ? "opacity-50 cursor-not-allowed"
                       : ""
@@ -96,6 +98,7 @@ const ProductDetails = () => {
                   disabled={product.countInStock === 0}
                   onClick={() => {
                     dispatch(addToCart({ ...product, qty }));
+                    navigate("/cart");
                   }}
                 >
                   Add to Cart
