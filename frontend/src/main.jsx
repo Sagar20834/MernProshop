@@ -19,6 +19,10 @@ import Payment from "./Components/Payment/Payment.jsx";
 import PlaceOrder from "./Components/PlaceOrder/PlaceOrder.jsx";
 import Order from "./Components/Order/Order.jsx";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import AdminRoute from "./Components/AdminRoute/AdminRoute.jsx";
+import AllOrder from "./Components/Order/AllOrder.jsx";
+import AllUsers from "./Components/AllUsers/AllUsers.jsx";
+import AllProduct from "./Components/Product/AllProduct.jsx";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +51,24 @@ const router = createBrowserRouter([
         element: <ProductDetails />,
       },
 
+      {
+        path: "/",
+        element: <AdminRoute />,
+        children: [
+          {
+            path: "/admin/orders",
+            element: <AllOrder />,
+          },
+          {
+            path: "/admin/products",
+            element: <AllProduct />,
+          },
+          {
+            path: "/admin/users",
+            element: <AllUsers />,
+          },
+        ],
+      },
       {
         path: "/",
         element: <PrivateRoute />,

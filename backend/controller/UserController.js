@@ -101,9 +101,13 @@ const updateUserProfile = async (req, res, next) => {
         user.password = req.body.password;
       }
       const updatedUser = await user.save();
+
       res.json({
-        message: "User profile updated successfully",
-        user: updatedUser,
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        isAdmin: updatedUser.isAdmin,
+        token: setToken(res, updatedUser),
       });
     } else {
       return next(appError("User Not Found", 404));

@@ -5,17 +5,18 @@ import {
   useGetOrderDetailsQuery,
   useGetPayPalClientIdQuery,
   usePayOrderMutation,
+  useDeliverOrderMutation,
 } from "../../slices/orderApiSlice";
 
 import { useEffect } from "react";
-import { FaTruckFast } from "react-icons/fa6";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { toast } from "react-toastify";
 import { formatDateNepali } from "../../utils/formatDateNepali";
 
 const Order = () => {
   const { id } = useParams();
-  //   console.log(id);
+  const { userInfo } = useSelector((state) => state.auth);
+  console.log(userInfo);
   const {
     data: order,
     isLoading,
@@ -24,10 +25,11 @@ const Order = () => {
     refetch,
   } = useGetOrderDetailsQuery(id);
   const orderDetails = order?.order;
-  console.log(orderDetails);
 
   const [payOrder, { isLoading: payLoading }] = usePayOrderMutation();
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+  const [deliverOrder, { isLoading: deliverLoading }] =
+    useDeliverOrderMutation();
   const {
     data: paypal,
     isLoading: paypalLoading,
@@ -63,7 +65,7 @@ const Order = () => {
   function onApprove(data, actions) {
     return actions.order.capture().then(async function (details) {
       try {
-        await payOrder({ id, details });
+        await payOrder({ orderId: id, details });
         refetch();
         toast.success("Order Paid Successfully!");
       } catch (error) {
@@ -72,7 +74,6 @@ const Order = () => {
     });
   }
   async function onApproveTest() {
-    console.log(id);
     await payOrder({ orderId: id, details: { payer: {} } });
     refetch();
     toast.success("Order Paid Successfully!");
@@ -86,7 +87,7 @@ const Order = () => {
         purchase_units: [
           {
             amount: {
-              currency_code: "NPR",
+              currency_code: "USD",
               value: orderDetails?.totalPrice,
             },
           },
@@ -96,6 +97,15 @@ const Order = () => {
         return id;
       });
   }
+  const deliverOrderHandler = async () => {
+    try {
+      await deliverOrder(id);
+      refetch();
+      toast.success("Order delivered Successfully!");
+    } catch (error) {
+      toast.error("Error while delivering order" + error?.data?.message);
+    }
+  };
 
   return isLoading ? (
     <Spinner />
@@ -149,7 +159,7 @@ const Order = () => {
                   }`}
                 >
                   <strong>Delivery Status : </strong>
-                  {orderDetails?.isPaid ? (
+                  {orderDetails?.isDelivered ? (
                     <span>Delivered</span>
                   ) : (
                     <span className="">Not Delivered</span>
@@ -265,6 +275,22 @@ const Order = () => {
                     )}
                   </>
                 )}
+
+                {deliverLoading && <Spinner />}
+                {userInfo &&
+                  userInfo.isAdmin &&
+                  orderDetails.isPaid &&
+                  !orderDetails.isDelivered && (
+                    <>
+                      <button
+                        type="submit"
+                        onClick={deliverOrderHandler}
+                        className="flex bg-green-400 min-w-32 rounded-lg text-black hover:scale-110 justify-center items-center text-center m-auto min-h-9 my-4 transition-all ease-in-out"
+                      >
+                        Mark As Delivered Order
+                      </button>
+                    </>
+                  )}
               </div>
             </div>
           </div>

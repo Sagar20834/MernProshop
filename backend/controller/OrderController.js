@@ -14,7 +14,6 @@ const addOrderItems = async (req, res, next) => {
     taxPrice,
     totalPrice,
   } = req.body;
-  console.log(orderItems);
 
   try {
     if (orderItems && orderItems.length === 0) {
@@ -52,8 +51,7 @@ const getMyOrders = async (req, res, next) => {
   try {
     const orders = await Order.find({ user: req.user._id });
     res.json({
-      message: "All Orders List",
-      orders,
+      data: orders,
     });
   } catch (error) {
     return next(appError("Failed to get my orders in :" + error.message, 500));
@@ -115,11 +113,15 @@ const updateOrderToPaid = async (req, res, next) => {
 //@access private ADMIN
 const updateOrderToDelivered = async (req, res, next) => {
   try {
-    res.json({
-      message: "Update order to Delivered by admin",
-    });
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(appError("Order Not Found", 404));
+    order.isDelivered = true;
+    order.deliveredAt = Date.now();
+    const updatedOrder = await order.save();
+
+    res.json(updatedOrder);
   } catch (error) {
-    return next(appError("Failed to get orders in :" + error, 500));
+    return next(appError("Failed to UPDATE orders in :" + error, 500));
   }
 };
 
@@ -128,9 +130,8 @@ const updateOrderToDelivered = async (req, res, next) => {
 //@access private  ADMI
 const getOrders = async (req, res, next) => {
   try {
-    res.json({
-      message: "All Orders by Admin",
-    });
+    const orders = await Order.find({}).populate("user", "name email");
+    res.json(orders);
   } catch (error) {
     return next(appError("Failed to get orders in :" + error, 500));
   }

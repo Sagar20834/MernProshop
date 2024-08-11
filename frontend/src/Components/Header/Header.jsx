@@ -82,6 +82,31 @@ const Header = () => {
                   >
                     Profile
                   </Link>
+                  {userInfo && userInfo.isAdmin && (
+                    <>
+                      <Link
+                        to="/admin/users"
+                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        Users
+                      </Link>
+                      <Link
+                        to="/admin/products"
+                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        Products
+                      </Link>
+                      <Link
+                        to="/admin/orders"
+                        className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        Orders
+                      </Link>
+                    </>
+                  )}
                   <button
                     onClick={() => {
                       logoutHandler();
