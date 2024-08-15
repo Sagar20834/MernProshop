@@ -1,4 +1,4 @@
-import { ORDERS_URL, PAYPAL_URL } from "../constants";
+import { KHALTI_URL, ORDERS_URL, PAYPAL_URL } from "../constants";
 import { apiSlice } from "./apiSlice";
 
 const orderApiSlice = apiSlice.injectEndpoints({
@@ -22,6 +22,18 @@ const orderApiSlice = apiSlice.injectEndpoints({
         url: `${ORDERS_URL}/${orderId}/pay`,
         method: "PUT",
         body: { ...details },
+      }),
+    }),
+    payByKhalti: builder.mutation({
+      query: (data) => ({
+        url: `https://a.khalti.com/api/v2/epayment/initiate/`,
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          Authorization: `Key live_secret_key_94630f75f03241f39714dca44ac4b23b`, // or hardcoded secret key for testing
+          "Content-Type": "application/json",
+        },
+        body: data,
       }),
     }),
     getPayPalClientId: builder.query({
@@ -62,4 +74,5 @@ export const {
   useGetMyOrdersQuery,
   useGetOrdersQuery,
   useDeliverOrderMutation,
+  usePayByKhaltiMutation,
 } = orderApiSlice;

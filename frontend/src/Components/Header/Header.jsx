@@ -52,7 +52,7 @@ const Header = () => {
       <div className="flex justify-between items-center mx-6">
         <Link to="/" className="flex gap-4 text-2xl font-bold">
           <img src={logo} alt="logo" />
-          <h1>MeroProShop</h1>
+          <h1 className="hidden sm:block ">MeroProShop</h1>
         </Link>
         <div className="flex gap-4 items-center">
           <Link to="/cart" className="flex gap-1 items-center">

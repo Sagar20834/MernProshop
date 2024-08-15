@@ -9,6 +9,7 @@ import {
   updateOrderToPaid,
   updateOrderToDelivered,
   getOrders,
+  payByKhalti,
 } from "../controller/OrderController.js";
 import isAdmin from "../middlewares/isAdmin.js";
 import isLoggedIn from "../middlewares/isLoggedIn.js";
@@ -18,6 +19,7 @@ OrderRouter.post("/", isLoggedIn, addOrderItems);
 OrderRouter.get("/myorders", isLoggedIn, getMyOrders);
 OrderRouter.get("/:id", isLoggedIn, getOrderById);
 OrderRouter.put("/:id/pay", isLoggedIn, updateOrderToPaid);
+OrderRouter.post("/:id/pay", isLoggedIn, payByKhalti);
 OrderRouter.put("/:id/deliver", isLoggedIn, isAdmin, updateOrderToDelivered); //admin
 OrderRouter.get("/", isLoggedIn, isAdmin, getOrders); //admin
 

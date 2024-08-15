@@ -23,6 +23,7 @@ import AdminRoute from "./Components/AdminRoute/AdminRoute.jsx";
 import AllOrder from "./Components/Order/AllOrder.jsx";
 import AllUsers from "./Components/AllUsers/AllUsers.jsx";
 import AllProduct from "./Components/Product/AllProduct.jsx";
+import EditProduct from "./Components/Product/EditProduct.jsx";
 
 const router = createBrowserRouter([
   {
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
           {
             path: "/admin/users",
             element: <AllUsers />,
+          },
+          {
+            path: "/admin/product/:id/edit",
+            element: <EditProduct />,
           },
         ],
       },

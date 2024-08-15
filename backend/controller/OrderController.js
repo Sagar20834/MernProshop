@@ -108,6 +108,31 @@ const updateOrderToPaid = async (req, res, next) => {
   }
 };
 
+const payByKhalti = async (req, res, next) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return next(appError("Order Not Found", 404));
+
+    order.isPaid = true;
+    order.paidAt = Date.now();
+
+    order.paymentResult = {
+      id: req.body.pidx,
+      status: req.body.status,
+      update_time: Date.now(),
+      email_address: req.body.email_address,
+    };
+
+    const updatedOrder = await order.save();
+    res.json({
+      message: "Order updated to paid",
+      updatedOrder,
+    });
+  } catch (error) {
+    return next(appError("Failed to update order status: " + error, 500));
+  }
+};
+
 //@desc update order to delivereed
 //@route GET /api/v1/orders/:id/pay
 //@access private ADMIN
@@ -144,4 +169,5 @@ export {
   updateOrderToPaid,
   updateOrderToDelivered,
   getOrders,
+  payByKhalti,
 };

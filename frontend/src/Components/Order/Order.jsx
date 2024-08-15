@@ -6,6 +6,7 @@ import {
   useGetPayPalClientIdQuery,
   usePayOrderMutation,
   useDeliverOrderMutation,
+  usePayByKhaltiMutation,
 } from "../../slices/orderApiSlice";
 
 import { useEffect } from "react";
@@ -16,7 +17,6 @@ import { formatDateNepali } from "../../utils/formatDateNepali";
 const Order = () => {
   const { id } = useParams();
   const { userInfo } = useSelector((state) => state.auth);
-  console.log(userInfo);
   const {
     data: order,
     isLoading,
@@ -30,6 +30,10 @@ const Order = () => {
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const [deliverOrder, { isLoading: deliverLoading }] =
     useDeliverOrderMutation();
+
+  const [payByKhalti, { isLoading: khaltiLoading, error: khaltiError }] =
+    usePayByKhaltiMutation();
+
   const {
     data: paypal,
     isLoading: paypalLoading,
@@ -39,9 +43,6 @@ const Order = () => {
   useEffect(() => {
     if (!errorpaypal && !paypalLoading && paypal?.clientId) {
       const loadPayPalScript = async () => {
-        console.log("Loading PayPal script with client ID:", paypal.clientId);
-
-        // Ensure PayPal script is not already loaded
         if (!window.paypal) {
           paypalDispatch({
             type: "resetOptions",
@@ -61,6 +62,30 @@ const Order = () => {
       }
     }
   }, [order, paypal, paypalDispatch, paypalLoading, errorpaypal]);
+
+  const handleKhalti = async () => {
+    console.log("working");
+
+    const khaltiData = {
+      return_url: `${window.location.origin}/order/${orderDetails._id}`,
+      website_url: window.location.origin,
+      amount: orderDetails.totalPrice,
+      purchase_order_id: `${orderDetails._id}`,
+      purchase_order_name: "Your Product Name",
+      customer_info: {
+        name: `${orderDetails.user.name}`,
+        email: `${orderDetails.user.email}`,
+        phone: `${orderDetails.user.phone}`,
+      },
+    };
+
+    try {
+      const { data } = await payByKhalti(khaltiData);
+      console.log("Payment Initiated: ", data);
+    } catch (error) {
+      console.error("Payment initiation failed: ", error);
+    }
+  };
 
   function onApprove(data, actions) {
     return actions.order.capture().then(async function (details) {
@@ -263,6 +288,12 @@ const Order = () => {
                           >
                             Test Pay Order{" "}
                           </button>
+                          <button
+                            className="text-2xl font-bold my-4 bg-violet-400 w-full rounded-md p-1 hover:bg-orange-300"
+                            onClick={handleKhalti}
+                          >
+                            Pay By Khalti
+                          </button>
                         </div>
                         <div>
                           <PayPalButtons
@@ -285,7 +316,7 @@ const Order = () => {
                       <button
                         type="submit"
                         onClick={deliverOrderHandler}
-                        className="flex bg-green-400 min-w-32 rounded-lg text-black hover:scale-110 justify-center items-center text-center m-auto min-h-9 my-4 transition-all ease-in-out"
+                        className="flex bg-green-400 min-w-32 rounded-lg text-black hover:scale-110 justify-center items-center text-center m-auto min-h-9 my-4 transition-all ease-in-out p-2 font-medium"
                       >
                         Mark As Delivered Order
                       </button>
