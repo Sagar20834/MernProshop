@@ -138,7 +138,7 @@ const UserProfile = () => {
               ) : error ? (
                 <p>{error?.data?.message}</p>
               ) : (
-                <div className="overflow-y-scroll overflow-x-auto scroll-m-3 h-64 w-full md:w-auto">
+                <div className=" overflow-auto scroll-m-3 h-64 w-full md:w-auto">
                   <table className="table-auto w-full border-collapse border border-gray-300 text-xs md:text-sm ">
                     <thead>
                       <tr className="bg-gray-200">

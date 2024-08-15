@@ -24,6 +24,7 @@ import AllOrder from "./Components/Order/AllOrder.jsx";
 import AllUsers from "./Components/AllUsers/AllUsers.jsx";
 import AllProduct from "./Components/Product/AllProduct.jsx";
 import EditProduct from "./Components/Product/EditProduct.jsx";
+import EditUser from "./Components/AllUsers/EditUser.jsx";
 
 const router = createBrowserRouter([
   {
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
           {
             path: "/admin/product/:id/edit",
             element: <EditProduct />,
+          },
+          {
+            path: "/admin/user/:id/edit",
+            element: <EditUser />,
           },
         ],
       },

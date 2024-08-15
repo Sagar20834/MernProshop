@@ -123,10 +123,7 @@ const updateUserProfile = async (req, res, next) => {
 const getUsers = async (req, res, next) => {
   try {
     const users = await User.find().select("-password");
-    res.json({
-      message: "All users profile By Admin",
-      users,
-    });
+    res.json(users);
   } catch (error) {
     return next(appError(error.message, 500));
   }
@@ -137,7 +134,15 @@ const getUsers = async (req, res, next) => {
 //@access private///ADMIN
 const deleteUser = async (req, res, next) => {
   try {
-    res.json("Delete  profile By Admin");
+    const userFound = await User.findById(req.params.id);
+    if (!userFound) return next(appError("User Not Found", 404));
+    if (userFound) {
+      if (userFound.isAdmin) {
+        return next(appError("User is admin and cannot be deleted", 404));
+      }
+      await User.findByIdAndDelete(userFound._id || userFound.id);
+      res.json("Delete  profile By Admin");
+    }
   } catch (error) {
     return next(appError(error.message, 500));
   }
@@ -148,7 +153,8 @@ const deleteUser = async (req, res, next) => {
 //@access private///ADMIN
 const getUserByID = async (req, res, next) => {
   try {
-    res.json("Get User By Id By  Admin");
+    const user = await User.findById(req.params.id).select("-password");
+    res.json(user);
   } catch (error) {
     return next(appError(error.message, 500));
   }
@@ -158,7 +164,21 @@ const getUserByID = async (req, res, next) => {
 //@access private///ADMIN
 const updateUser = async (req, res, next) => {
   try {
-    res.json("Update  User By Id By  Admin");
+    const user = await User.findById(req.params.id);
+    if (!user) return next(appError("User Not Found", 404));
+    if (user) {
+      user.name = req.body.name || user.name;
+      user.email = req.body.email || user.email;
+      user.isAdmin = req.body.isAdmin || user.isAdmin;
+
+      const updatedUser = await user.save();
+      res.json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        isAdmin: Boolean(updatedUser.isAdmin),
+      });
+    }
   } catch (error) {
     return next(appError(error.message, 500));
   }

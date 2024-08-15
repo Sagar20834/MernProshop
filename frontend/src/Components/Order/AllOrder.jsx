@@ -20,7 +20,7 @@ const AllOrder = () => {
       ) : (
         <>
           <h1 className="text-center font-bold text-2xl mb-4"> All Orders</h1>
-          <div className="grid grid-cols-1 border-b">
+          <div className="grid grid-cols-1 border-b  overflow-auto">
             <table>
               <thead className="bg-orange-200 text-center">
                 <tr>

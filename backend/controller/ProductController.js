@@ -1,8 +1,7 @@
-import cloudinary from "../config/cloudinaryConfig.js";
 import Product from "../models/ProductModel.js";
 import appError from "../utils/appError.js";
-import fs from "fs";
-import path from "path";
+import cloudinary from "../config/cloudinaryConfig.js";
+import { unlink } from "fs/promises";
 
 const getProducts = async (req, res, next) => {
   try {
@@ -55,26 +54,68 @@ const deleteProduct = async (req, res, next) => {
     return next(appError(error.message));
   }
 };
-const updateProduct = async (req, res, next) => {
+
+const updateProduct = async (req, res) => {
   try {
-    const { name, price, description, category, brand, countInStock, image } =
+    const { name, price, description, category, brand, countInStock } =
       req.body;
 
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      { name, price, description, category, brand, countInStock, image },
-      { new: true, runValidators: true }
-    );
+    // Find the existing product by its ID
+    const product = await Product.findById(req.params.id);
 
-    if (!updatedProduct) {
+    if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    res.json(updatedProduct);
+    // Check if a new image file is provided
+    if (req.file) {
+      // Specify the folder path dynamically, for example using the product ID or category
+      const folderPath = `products/${product._id}`; // You can use any naming convention
+
+      // If the product already has an image, delete the old image from Cloudinary
+      if (product.image) {
+        const publicId = product.image
+          .split("/")
+          .slice(-2)
+          .join("/")
+          .split(".")[0];
+        await cloudinary.uploader.destroy(publicId); // Remove the old image
+      }
+
+      // Upload the new image to Cloudinary and specify the folder and public_id
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: folderPath,
+        public_id: product._id, // Use the product ID as the file name
+        overwrite: true, // Ensure that the existing file with the same public_id is overwritten
+      });
+
+      // Remove the uploaded file from the server
+      await unlink(req.file.path);
+
+      // Update the image URL in the product object
+      product.image = result.secure_url;
+    }
+
+    // Update other product fields
+    product.name = name;
+    product.price = price;
+    product.description = description;
+    product.category = category;
+    product.brand = brand;
+    product.countInStock = countInStock;
+    product.user = req.user._id;
+
+    // Save the updated product
+    await product.save();
+
+    res.json({ message: "Product updated successfully", product });
   } catch (error) {
-    next(error);
+    res.status(500).json({ error: error.message });
   }
 };
+
+export default updateProduct;
+
 export {
   getProducts,
   getProductById,

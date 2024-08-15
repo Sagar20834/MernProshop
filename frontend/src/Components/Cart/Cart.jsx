@@ -40,13 +40,13 @@ const Cart = () => {
 
             {/* Cart Items */}
             {cartItems.map((cartItem, i) => (
-              <div key={i} className="border-b p-2">
+              <div key={i} className="border-b p-2 ">
                 <div
                   key={cartItem._id}
-                  className="flex flex-col md:flex-row gap-4 items-center my-4 mx-2 md:mx-8"
+                  className="flex flex-col md:flex-row gap-4 items-center my-4 mx-2 md:mx-8  "
                 >
                   {/* Item and Image */}
-                  <div className="flex flex-col md:flex-row items-start gap-4 md:w-5/12">
+                  <div className="flex flex-col md:flex-row items-start gap-4 md:w-5/12 ">
                     <div className="h-24 w-full md:w-16 flex-shrink-0">
                       <img
                         src={cartItem.image}

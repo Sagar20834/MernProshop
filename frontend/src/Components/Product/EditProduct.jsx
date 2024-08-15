@@ -35,14 +35,16 @@ const EditProduct = () => {
       setDescription(product.description);
       setCategory(product.category);
       setBrand(product.brand);
-      setImage(product.image);
       setCountInStock(product.countInStock);
+      setPreviewImage(product.image); // Set the old image as the initial preview
     }
   }, [product]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
+
+    // Generate a preview of the new image
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreviewImage(reader.result);
@@ -53,6 +55,7 @@ const EditProduct = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
 
+    // Create a new FormData object
     const formData = new FormData();
     formData.append("name", name);
     formData.append("price", price);
@@ -61,11 +64,13 @@ const EditProduct = () => {
     formData.append("brand", brand);
     formData.append("countInStock", countInStock);
 
+    // Append the image only if it's updated
     if (image) {
       formData.append("image", image);
     }
 
     try {
+      // Call the updateProduct mutation with formData
       await updateProduct({ id, formData }).unwrap(); // unwrap to handle the result or error
       toast.success("Product updated successfully!");
       refetch();
@@ -86,10 +91,8 @@ const EditProduct = () => {
       <h1 className="text-3xl md:text-5xl text-center font-bold my-4">
         Edit Product
       </h1>
-      {loadingUpdateProduct && <Spinner />}
-      {isLoading ? (
-        <Spinner />
-      ) : error ? (
+      {(isLoading || loadingUpdateProduct) && <Spinner />}
+      {error ? (
         <p>{error?.data?.message || error.message}</p>
       ) : (
         <div className="flex justify-center w-full">
@@ -203,10 +206,12 @@ const EditProduct = () => {
               <div className="flex justify-center my-2">
                 <button
                   type="submit"
-                  className="flex bg-green-400 min-w-32 rounded-lg text-black hover:scale-110 justify-center items-center text-center m-auto min-h-9 my-4"
+                  className={`flex bg-green-400 min-w-32 rounded-lg text-black hover:scale-110 justify-center items-center text-center m-auto min-h-9 my-4 ${
+                    loadingUpdateProduct ? "bg-red-500" : " bg-green-400"
+                  }`}
                   disabled={loadingUpdateProduct}
                 >
-                  Update Product
+                  {loadingUpdateProduct ? "Updating..." : "Update Product"}
                 </button>
               </div>
             </form>
@@ -216,5 +221,4 @@ const EditProduct = () => {
     </>
   );
 };
-
 export default EditProduct;

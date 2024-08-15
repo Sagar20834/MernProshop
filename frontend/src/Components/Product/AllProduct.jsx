@@ -74,7 +74,7 @@ const AllProduct = () => {
         <h1>Error: {error.message}</h1>
       ) : (
         <>
-          <div className="grid grid-cols-1 border-b">
+          <div className="grid grid-cols-1 border-b overflow-auto">
             <table>
               <thead className="bg-orange-200 text-center">
                 <tr>
@@ -107,7 +107,7 @@ const AllProduct = () => {
                     <td>{product.brand}</td>
                     <td>{product.category}</td>
 
-                    <td className="border border-gray-300 px-2 md:px-4 py-2 ">
+                    <td className="px-2 md:px-4 py-2  flex">
                       <Link to={`/admin/product/${product._id}/edit`}>
                         <button className=" p-1 rounded-md text-xs md:text-sm mr-4">
                           <FaPenToSquare />
