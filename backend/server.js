@@ -40,18 +40,6 @@ app.get("/api/config/paypal", (req, res) =>
   res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
 );
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("frontend/build"));
-} else {
-  app.get("/", (req, res) => {
-    res.json("API server is Up and Running , this is the API server!");
-  });
-}
-
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve("frontend", "build", "index.html"));
-});
-
 app.use(globalErrorHandler);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
