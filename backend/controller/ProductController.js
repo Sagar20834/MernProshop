@@ -5,7 +5,7 @@ import { unlink } from "fs/promises";
 
 const getProducts = async (req, res, next) => {
   try {
-    const pageSize = 4;
+    const pageSize = await Product.countDocuments({});
     const page = Number(req.query.pageNumber) || 1;
     const skip = (page - 1) * pageSize;
     const productCount = await Product.countDocuments({});
