@@ -1,22 +1,49 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
 import Rating from "../Rating/Rating";
-import { useGetSingleProductByIdQuery } from "../../slices/productApiSlice";
+import {
+  useCreateReviewMutation,
+  useGetSingleProductByIdQuery,
+} from "../../slices/productApiSlice";
 import Spinner from "../Spinner/Spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../slices/cartSlice";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const ProductDetails = () => {
   const [qty, setQty] = useState(1);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
   const { id } = useParams();
   const {
     data: product,
     isLoading,
     isError,
+    refetch,
     error,
   } = useGetSingleProductByIdQuery(id);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [createReview, { isLoading: loadingReview }] =
+    useCreateReviewMutation();
+
+  const { userInfo } = useSelector((state) => state.auth);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await createReview({ id, rating, comment }).unwrap();
+      console.log(res);
+      refetch();
+      toast.success("Review submitted successfully!");
+      setRating(0);
+      setComment("");
+    } catch (error) {
+      toast.error("Failed to create review" + error?.data?.message);
+      setRating(0);
+      setComment("");
+    }
+  };
 
   return (
     <>
@@ -103,6 +130,76 @@ const ProductDetails = () => {
                 >
                   Add to Cart
                 </button>
+              </div>
+            </div>
+          </div>
+          <div className=" md:mx-24">
+            <h1 className="text-left text-3xl font-bold">Reviews:</h1>
+            <div className="flex justify-start flex-col">
+              {product.reviews.length === 0 && (
+                <>
+                  <p>No reviews</p>
+                </>
+              )}
+              {product.reviews.map((review) => (
+                <div key={review._id} className="my-4">
+                  <h2>{review.name}</h2>
+                  <Rating value={review.rating} />
+                  <p>{review.comment}</p>
+                  <hr />
+                </div>
+              ))}
+              <div>
+                <h2 className="text-3xl font-bold">Write a Review:</h2>
+                {loadingReview && <Spinner />}
+                {userInfo ? (
+                  <>
+                    <form action="submit" onSubmit={handleSubmit}>
+                      <div className="mb-4">
+                        <label htmlFor="rating">Rating:</label>
+                        <select
+                          id="rating"
+                          name="rating"
+                          value={rating}
+                          onChange={(e) => setRating(Number(e.target.value))}
+                          className="border rounded p-1"
+                        >
+                          <option value="" hidden>
+                            Select...
+                          </option>
+                          <option value="1">1-Poor</option>
+                          <option value="2">2-Fair</option>
+                          <option value="3">3-Good</option>
+                          <option value="4">4-Very Good</option>
+                          <option value="5">5-Excellent</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label htmlFor="comment">Comment:</label>
+                        <textarea
+                          id="comment"
+                          name="comment"
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                          rows="4"
+                          className="border rounded p-1 flex md:w-1/2 w-full"
+                        ></textarea>
+                        <div className="flex justify-left my-4">
+                          <button
+                            type="submit"
+                            className="p-2 bg-green-400 rounded-md"
+                          >
+                            Submit
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-2xl">Login to Continue </p>
+                  </>
+                )}
               </div>
             </div>
           </div>

@@ -5,8 +5,13 @@ import { unlink } from "fs/promises";
 
 const getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find({});
-    res.json(products);
+    const pageSize = 4;
+    const page = Number(req.query.pageNumber) || 1;
+    const skip = (page - 1) * pageSize;
+    const productCount = await Product.countDocuments({});
+
+    const products = await Product.find({}).limit(pageSize).skip(skip);
+    res.json({ products, page, pages: Math.ceil(productCount / pageSize) });
   } catch (error) {
     return next(appError(error.message));
   }
@@ -114,12 +119,44 @@ const updateProduct = async (req, res) => {
   }
 };
 
-export default updateProduct;
+//api/v1/products/:id/review //post private
+const createReview = async (req, res, next) => {
+  const { rating, comment } = req.body;
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product)
+      return next(appError("Product Not Found - with Id " + req.params.id));
+    const alreadyReviewed = product.reviews.find(
+      (review) => review.user.toString() === req.user._id.toString()
+    );
+    if (alreadyReviewed) {
+      return res.status(400).json({ message: "Product already reviewed" });
+    }
+    const review = {
+      user: req.user._id,
+      name: req.user.name,
+      rating,
+      comment,
+    };
+    product.reviews.push(review);
+    product.numReviews = product.reviews.length;
 
+    product.rating =
+      product.reviews.reduce((acc, review) => acc + review.rating, 0) /
+      product.reviews.length;
+
+    await product.save();
+
+    res.json({ message: "Review added successfully", product });
+  } catch (error) {
+    return next(appError(error.message));
+  }
+};
 export {
   getProducts,
   getProductById,
   createProduct,
   deleteProduct,
   updateProduct,
+  createReview,
 };

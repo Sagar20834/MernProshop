@@ -5,6 +5,7 @@ import {
   getProductById,
   getProducts,
   updateProduct,
+  createReview,
 } from "../controller/ProductController.js";
 import isLoggedIn from "../middlewares/isLoggedIn.js";
 import isAdmin from "../middlewares/isAdmin.js";
@@ -37,4 +38,5 @@ ProductRouter.put(
   updateProduct
 );
 
+ProductRouter.post("/:id/reviews", isLoggedIn, createReview);
 export default ProductRouter;
