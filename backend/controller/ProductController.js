@@ -5,13 +5,20 @@ import { unlink } from "fs/promises";
 
 const getProducts = async (req, res, next) => {
   try {
-    const pageSize = await Product.countDocuments({});
+    const pageSize = 12;
     const page = Number(req.query.pageNumber) || 1;
     const skip = (page - 1) * pageSize;
     const productCount = await Product.countDocuments({});
 
     const products = await Product.find({}).limit(pageSize).skip(skip);
-    res.json({ products, page, pages: Math.ceil(productCount / pageSize) });
+    res.json({
+      products,
+      skip,
+      page,
+      pages: Math.ceil(productCount / pageSize),
+      productCount,
+      pageSize,
+    });
   } catch (error) {
     return next(appError(error.message));
   }

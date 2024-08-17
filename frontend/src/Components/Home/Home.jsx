@@ -3,10 +3,10 @@ import Product from "../Product/Product";
 import { useGetAllProductsQuery } from "../../slices/productApiSlice";
 import Spinner from "../Spinner/Spinner";
 import { useParams } from "react-router-dom";
+import Pagination from "../Pagination/Pagination";
 
 const Home = () => {
   const { pageNumber } = useParams();
-  console.log(pageNumber);
   const { data, isLoading, isError, error } = useGetAllProductsQuery({
     pageNumber,
   });
@@ -34,6 +34,14 @@ const Home = () => {
               </div>
             ))}
           </div>
+          <Pagination
+            currentPage={data.page}
+            pages={data?.pages}
+            products={data.products}
+            total={data.productCount}
+            pageSize={data.pageSize}
+            skip={data.skip}
+          />
         </>
       )}
     </>

@@ -7,6 +7,7 @@ import globalErrorHandler from "./middlewares/globalErrorHandler.js";
 import UserRouter from "./routes/UserRoute.js";
 import cookieParser from "cookie-parser";
 import OrderRouter from "./routes/OrderRoute.js";
+import path from "path";
 
 dotenv.config();
 
@@ -41,5 +42,26 @@ app.get("/api/config/paypal", (req, res) =>
 );
 
 app.use(globalErrorHandler);
+
+if (process.env.NODE_ENV === "production") {
+  console.log("Production mode");
+  const staticPath = path.resolve("frontend", "dist");
+  console.log("Serving static files from:", staticPath);
+  app.use(express.static(staticPath));
+
+  app.get("*", (req, res) => {
+    console.log("Request received for:", req.url);
+    console.log(
+      "Serving index.html from:",
+      path.resolve(staticPath, "index.html")
+    );
+    res.sendFile(path.resolve(staticPath, "index.html"));
+  });
+} else {
+  console.log("Development mode");
+  app.get("/", (req, res) => {
+    res.json("API server is Up and Running , this is the API server!");
+  });
+}
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
