@@ -70,6 +70,10 @@ const router = createBrowserRouter([
             element: <AllProduct />,
           },
           {
+            path: "/admin/products/:pageNumber",
+            element: <AllProduct />,
+          },
+          {
             path: "/admin/users",
             element: <AllUsers />,
           },

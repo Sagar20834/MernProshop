@@ -10,6 +10,7 @@ const Home = () => {
   const { data, isLoading, isError, error } = useGetAllProductsQuery({
     pageNumber,
   });
+
   return (
     <>
       {isLoading ? (

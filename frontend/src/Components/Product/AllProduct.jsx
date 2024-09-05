@@ -8,23 +8,22 @@ import {
 } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import Spinner from "../Spinner/Spinner";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   useCreateProductMutation,
   useDeleteProductMutation,
   useGetAllProductsQuery,
 } from "../../slices/productApiSlice";
 import { toast } from "react-toastify";
+import Pagination from "../Pagination/Pagination";
 
 const AllProduct = () => {
-  const {
-    data: AllProducts,
-    isLoading,
-    error,
-    refetch,
-  } = useGetAllProductsQuery();
+  const { pageNumber } = useParams();
 
-  const dispatch = useDispatch();
+  const { data, isLoading, isError, error } = useGetAllProductsQuery({
+    pageNumber,
+  });
+
   const [createProduct, { isLoading: loadingCreate }] =
     useCreateProductMutation();
   const [deleteProduct] = useDeleteProductMutation();
@@ -88,7 +87,7 @@ const AllProduct = () => {
                 </tr>
               </thead>
               <tbody className="text-center">
-                {AllProducts?.map((product, i) => (
+                {data?.products?.map((product, i) => (
                   <tr
                     key={product._id}
                     className={`${i % 2 === 0 ? " bg-gray-200" : "bg-white"}`}
@@ -125,6 +124,15 @@ const AllProduct = () => {
                 ))}
               </tbody>
             </table>
+            <Pagination
+              currentPage={data.page}
+              pages={data?.pages}
+              products={data?.products}
+              total={data?.productCount}
+              pageSize={data?.pageSize}
+              skip={data?.skip}
+              pageNumber={pageNumber}
+            />
           </div>
         </>
       )}
